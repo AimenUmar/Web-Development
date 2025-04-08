@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Hobbs London</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <a href="#" class="back-link"> Continue shopping</a>
+            </div>
+            <div class="logo">
+                <h1>HOBBS</h1>
+                <span>LONDON</span>
+                <p><img src="images/checkout.png" alt="home"> Secure Checkout</p>
+            </div>
+            <div class="help-section">
+                <p>Need help?</p>
+                <p>Call us on: <span class="phone">0203 095 3939</span></p>
+            </div>
+        </header>
+        
+        <div class="checkout-steps">
+            <div class="step active">1
+                <span class="step-label">DELIVERY</span>
+            </div>
+            <div class="step">2
+                <span class="step-label">PAYMENT</span>
+            </div>
+            <div class="step">3
+                <span class="step-label">RECEIPT</span>
+            </div>
+        </div>
+        
+        <div class="checkout-content">
+            <div class="delivery-section">
+                <h2>DELIVERY</h2>
+                
+                <div class="delivery-options">
+                    <div class="delivery-option selected">
+                        <h3><img src="images/home.png" alt="home"> HOME / OFFICE DELIVERY</h3>
+                        <p>Choose your delivery method below</p>
+                        <div class="checkmark">✓</div>
+                    </div>
+                    <div class="delivery-option">
+                        <h3><img src="images/click.png" alt="click"> CLICK & COLLECT</h3>
+                        <p>Collect from one of 51 Hobbs stores</p>
+                    </div>
+                </div>
+                
+                <div class="success-message" id="successMessage">
+                    Your order has been placed successfully! Thank you for your purchase.
+                </div>
+                
+                <div id="deliveryForm">
+                    <h2>DELIVERY ADDRESS</h2>
+                    
+                    <div class="address-finder">
+                        <h3>ADDRESS QUICK FINDER</h3>
+                        <div class="search-box">
+                            <div class="search-icon"><img src="images/searchicon.png" alt="Search icon"></div>
+                            <input type="text" placeholder="Type address or postcode">
+                        </div>
+                        <a class="manual-address">Enter address manually</a>
+                    </div>
+                    
+                    <form id="checkoutForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="title">Title*</label>
+                                <select id="title" name="title" required>
+                                    <option value="">Please select</option>
+                                    <option value="mr">Mr</option>
+                                    <option value="mrs">Mrs</option>
+                                    <option value="miss">Miss</option>
+                                    <option value="ms">Ms</option>
+                                    <option value="dr">Dr</option>
+                                </select>
+                                <div class="error-message" id="titleError">Please select a title</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name*</label>
+                                <input type="text" id="firstName" name="firstName" required pattern="^[A-Za-z]+$">
+                                <div class="error-message" id="firstNameError">Please enter a valid first name (letters only)</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name*</label>
+                                <input type="text" id="lastName" name="lastName" required pattern="^[A-Za-z]+$">
+                                <div class="error-message" id="lastNameError">Please enter a valid last name (letters only)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="countryCode">Country Code</label>
+                                <select id="countryCode" name="countryCode">
+                                    <option value="+92">🇵🇰 +92</option>
+                                    <option value="+44">🇬🇧 +44</option>
+                                    <option value="+1">🇺🇸 +1</option>
+                                    <option value="+33">🇫🇷 +33</option>
+                                    <option value="+49">🇩🇪 +49</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number*</label>
+                                <input type="tel" id="phone" name="phone" required pattern="[0-9]{10,15}" minlength="10" maxlength="15">
+                                <div class="error-message" id="phoneError">Please enter a valid phone number (10-15 digits)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address*</label>
+                            <input type="email" id="email" name="email" required>
+                            <div class="error-message" id="emailError">Please enter a valid email address</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address Line 1*</label>
+                            <input type="text" id="address" name="address" required>
+                            <div class="error-message" id="addressError">Please enter your address</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address2">Address Line 2</label>
+                            <input type="text" id="address2" name="address2">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City*</label>
+                                <input type="text" id="city" name="city" required>
+                                <div class="error-message" id="cityError">Please enter your city</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="postcode">Postcode*</label>
+                                <input type="text" id="postcode" name="postcode" required>
+                                <div class="error-message" id="postcodeError">Please enter your postcode</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country">Country*</label>
+                            <select id="country" name="country" required>
+                                <option value="Pakistan">Pakistan</option>
+                                <option value="United Kingdom">United Kingdom</option>
+                                <option value="United States">United States</option>
+                                <option value="France">France</option>
+                                <option value="Germany">Germany</option>
+                            </select>
+                            <div class="error-message" id="countryError">Please select a country</div>
+                        </div>
+                        
+                        <div class="payment-section">
+                            <h2>PAYMENT DETAILS</h2>
+                            
+                            <div class="form-group">
+                                <label for="cardNumber">Credit Card Number*</label>
+                                <input type="text" id="cardNumber" name="cardNumber" required pattern="[0-9]{16}" maxlength="16">
+                                <div class="error-message" id="cardNumberError">Please enter a valid 16-digit card number</div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="expiryDate">Expiry Date (MM/YYYY)*</label>
+                                    <input type="text" id="expiryDate" name="expiryDate" placeholder="MM/YYYY" required>
+                                    <div class="error-message" id="expiryDateError">Please enter a valid future expiry date</div>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="cvv">CVV*</label>
+                                    <input type="text" id="cvv" name="cvv" required pattern="[0-9]{3}" maxlength="3">
+                                    <div class="error-message" id="cvvError">CVV must be exactly 3 digits</div>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="continue-btn">CONTINUE TO PAYMENT</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="order-summary">
+                <h2>Your Items (1)</h2>
+                
+                <div class="product-item">
+                    <div class="product-image">
+                        <img src="images/carldress.png" alt="Carly Dress">
+                    </div>
+                    <div class="product-details">
+                        <h3>CARLY DRESS</h3>
+                        <p>Colour: Pale Pink Multi</p>
+                        <p>Size: UK 10</p>
+                        <p>Quantity: 1</p>
+                        <p class="price">£169</p>
+                    </div>
+                </div>
+                
+                <div class="order-totals">
+                    <div class="total-row">
+                        <span>Bag total</span>
+                        <span>£169</span>
+                    </div>
+                    <div class="total-row">
+                        <span>Delivery method</span>
+                        <span>£0</span>
+                    </div>
+                    <div class="total-row final-total">
+                        <span>TOTAL</span>
+                        <span>£169</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('checkoutForm');
+            const successMessage = document.getElementById('successMessage');
+            
+            function validateName(input) {
+                const nameRegex = /^[A-Za-z]+$/;
+                return nameRegex.test(input.value);
+            }
+            
+            function validateEmail(input) {
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return emailRegex.test(input.value);
+            }
+            
+            function validatePhone(input) {
+                const phoneRegex = /^[0-9]{10,15}$/;
+                return phoneRegex.test(input.value);
+            }
+            
+            function validateRequired(input) {
+                return input.value.trim() !== '';
+            }
+            
+            function validateCardNumber(input) {
+                const cardRegex = /^[0-9]{16}$/;
+                return cardRegex.test(input.value);
+            }
+            
+            function validateExpiryDate(input) {
+                const dateRegex = /^(0[1-9]|1[0-2])\/20[2-9][0-9]$/;
+                if (!dateRegex.test(input.value)) {
+                    return false;
+                }
+                
+                const [month, year] = input.value.split('/');
+                const expiryDate = new Date(parseInt(year), parseInt(month) - 1);
+                const currentDate = new Date();
+                
+                return expiryDate > currentDate;
+            }
+            
+            function validateCVV(input) {
+                const cvvRegex = /^[0-9]{3}$/;
+                return cvvRegex.test(input.value);
+            }
+            
+            function showError(input, errorDiv) {
+                input.classList.add('invalid');
+                errorDiv.style.display = 'block';
+            }
+            
+            function hideError(input, errorDiv) {
+                input.classList.remove('invalid');
+                errorDiv.style.display = 'none';
+            }
+            
+            const validationFields = [
+                { input: document.getElementById('title'), error: document.getElementById('titleError'), validator: validateRequired },
+                { input: document.getElementById('firstName'), error: document.getElementById('firstNameError'), validator: validateName },
+                { input: document.getElementById('lastName'), error: document.getElementById('lastNameError'), validator: validateName },
+                { input: document.getElementById('phone'), error: document.getElementById('phoneError'), validator: validatePhone },
+                { input: document.getElementById('email'), error: document.getElementById('emailError'), validator: validateEmail },
+                { input: document.getElementById('address'), error: document.getElementById('addressError'), validator: validateRequired },
+                { input: document.getElementById('city'), error: document.getElementById('cityError'), validator: validateRequired },
+                { input: document.getElementById('postcode'), error: document.getElementById('postcodeError'), validator: validateRequired },
+                { input: document.getElementById('country'), error: document.getElementById('countryError'), validator: validateRequired },
+                { input: document.getElementById('cardNumber'), error: document.getElementById('cardNumberError'), validator: validateCardNumber },
+                { input: document.getElementById('expiryDate'), error: document.getElementById('expiryDateError'), validator: validateExpiryDate },
+                { input: document.getElementById('cvv'), error: document.getElementById('cvvError'), validator: validateCVV }
+            ];
+            
+            validationFields.forEach(field => {
+                field.input.addEventListener('input', function() {
+                    if (field.validator(field.input)) {
+                        hideError(field.input, field.error);
+                    }
+                });
+                
+                field.input.addEventListener('blur', function() {
+                    if (!field.validator(field.input)) {
+                        showError(field.input, field.error);
+                    }
+                });
+            });
+            
+            document.getElementById('cardNumber').addEventListener('input', function(e) {
+                let value = this.value.replace(/\D/g, '');
+                if (value.length > 16) {
+                    value = value.slice(0, 16);
+                }
+                
+                this.value = value;
+            });
+            
+            document.getElementById('expiryDate').addEventListener('input', function(e) {
+                let value = this.value.replace(/\D/g, '');
+                
+                if (value.length > 0) {
+                    if (value.length <= 2) {
+                        this.value = value;
+                    } 
+                    else if (value.length <= 6) {
+                        this.value = value.slice(0, 2) + '/' + value.slice(2);
+                    }
+                }
+            });
+            
+            const deliveryOptions = document.querySelectorAll('.delivery-option');
+            deliveryOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    deliveryOptions.forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+            });
+            
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                let hasError = false;
+                validationFields.forEach(field => {
+                    if (!field.validator(field.input)) {
+                        showError(field.input, field.error);
+                        hasError = true;
+                    } else {
+                        hideError(field.input, field.error);
+                    }
+                });
+                
+                if (!hasError) {
+                    successMessage.style.display = 'block';
+                    document.getElementById('deliveryForm').style.display = 'none';
+                    setTimeout(() => {
+                        form.reset();
+                        successMessage.style.display = 'none';
+                        document.getElementById('deliveryForm').style.display = 'block';
+                    }, 3000);
+
+                    document.querySelector('.step.active').classList.remove('active');
+                    document.querySelectorAll('.step')[1].classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
