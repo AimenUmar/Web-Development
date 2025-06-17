@@ -1,0 +1,286 @@
+<div class="container py-5">
+    <div class="row">
+        <div class="col-lg-6 mb-4">
+            <div class="card">
+ 
+                <div style="height: 400px; overflow: hidden;">
+                    <img src="<%= product.image || 'https://via.placeholder.com/400x400/6c757d/ffffff?text=Product+Image' %>" 
+                         alt="<%= product.name %>" 
+                         class="card-img-top" 
+                         style="height: 100%; width: 100%; object-fit: cover;"
+                         onerror="this.src='https://via.placeholder.com/400x400/6c757d/ffffff?text=Product+Image'"
+                         loading="lazy">
+                </div>
+            </div>
+        </div>
+
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-body">
+
+                    <span class="badge bg-secondary mb-3">
+                        <%= product.category || 'General' %>
+                    </span>
+
+
+                    <h1 class="h2 mb-3"><%= product.name %></h1>
+
+                    <p class="lead text-muted mb-4">
+                        <%= product.description || 'No description available' %>
+
+                    <div class="mb-4">
+                        <span class="h3 text-primary">$<%= parseFloat(product.price || 0).toFixed(2) %></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-box text-muted me-2"></i>
+                            <span class="text-muted">Stock: </span>
+                            <span class="ms-2 <%= parseInt(product.quantity || 0) > 0 ? 'text-success' : 'text-danger' %>">
+                                <% if (parseInt(product.quantity || 0) > 0) { %>
+                                    <%= product.quantity %> available
+                                <% } else { %>
+                                    Out of stock
+                                <% } %>
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="quantity" class="form-label">Quantity:</label>
+                        <div class="input-group" style="max-width: 150px;">
+                            <button class="btn btn-outline-secondary" type="button" onclick="decreaseQuantity()"
+                                    <% if (parseInt(product.quantity || 0) <= 0) { %>disabled<% } %>>
+                                <i class="fas fa-minus"></i>
+                            </button>
+                            <input type="number" class="form-control text-center" id="quantity" 
+                                   value="1" min="1" max="<%= product.quantity || 0 %>" 
+                                   <% if (parseInt(product.quantity || 0) <= 0) { %>disabled<% } %>>
+                            <button class="btn btn-outline-secondary" type="button" onclick="increaseQuantity()"
+                                    <% if (parseInt(product.quantity || 0) <= 0) { %>disabled<% } %>>
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2 mb-4">
+                        <button class="btn btn-primary btn-lg add-to-cart-btn" 
+                                data-product-id="<%= product._id %>"
+                                data-product-name="<%= product.name %>"
+                                <% if (parseInt(product.quantity || 0) <= 0) { %>disabled<% } %>>
+                            <i class="fas fa-cart-plus"></i> 
+                            <span class="btn-text">
+                                <% if (parseInt(product.quantity || 0) <= 0) { %>
+                                    Out of Stock
+                                <% } else { %>
+                                    Add to Cart
+                                <% } %>
+                            </span>
+                        </button>
+                        <a href="/products" class="btn btn-outline-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to Products
+                        </a>
+                    </div>
+
+                    <div class="border-top pt-4">
+                        <h6 class="mb-3">Product Features:</h6>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                High Quality Materials
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Fast Shipping Available
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                30-Day Return Policy
+                            </li>
+                            <li class="mb-2">
+                                <i class="fas fa-check text-success me-2"></i>
+                                Customer Support
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+
+<script>
+
+if (typeof jQuery === 'undefined') {
+    console.error('jQuery is not loaded! Please include jQuery in your layout.');
+    alert('jQuery is required for this page to work properly. Please check your layout file.');
+}
+
+$(document).ready(function() {
+    console.log('Product details page loaded');
+    
+
+    $('.add-to-cart-btn').click(function(e) {
+        e.preventDefault();
+        
+        const productId = $(this).data('product-id');
+        const productName = $(this).data('product-name');
+        
+        if (!productId) {
+            showAlert('danger', 'Product ID is missing');
+            return;
+        }
+        
+        addToCart(productId, this);
+    });
+});
+
+function increaseQuantity() {
+    const quantityInput = document.getElementById('quantity');
+    const currentValue = parseInt(quantityInput.value);
+    const maxValue = parseInt(quantityInput.max);
+    
+    if (currentValue < maxValue && maxValue > 0) {
+        quantityInput.value = currentValue + 1;
+    }
+}
+
+function decreaseQuantity() {
+    const quantityInput = document.getElementById('quantity');
+    const currentValue = parseInt(quantityInput.value);
+    
+    if (currentValue > 1) {
+        quantityInput.value = currentValue - 1;
+    }
+}
+
+function addToCart(productId, buttonElement = null) {
+    const quantity = parseInt(document.getElementById('quantity').value) || 1;
+    
+    console.log('Adding to cart:', productId, quantity);
+    
+    let button = buttonElement;
+    let originalText = '';
+    
+    if (button) {
+        originalText = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span class="btn-text">Adding...</span>';
+    }
+    
+    $.ajax({
+        url: '/cart/add',
+        method: 'POST',
+        data: { 
+            productId: productId, 
+            quantity: quantity 
+        },
+        timeout: 10000, 
+        success: function(response) {
+            console.log('Cart response:', response);
+            if (response && response.success) {
+                showAlert('success', response.message || 'Product added to cart successfully!');
+                updateCartCount(response.cartCount || response.itemCount);
+            } else {
+                showAlert('danger', response.message || 'Error adding to cart');
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error('AJAX Error:', xhr, status, error);
+            
+            let errorMessage = 'Error adding product to cart';
+            
+            if (xhr.status === 404) {
+                errorMessage = 'Cart endpoint not found. Please check your server routes.';
+            } else if (xhr.status === 500) {
+                errorMessage = 'Server error occurred. Please try again.';
+            } else if (status === 'timeout') {
+                errorMessage = 'Request timed out. Please try again.';
+            } else if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
+            
+            showAlert('danger', errorMessage);
+        },
+        complete: function() {
+
+            if (button) {
+                button.disabled = false;
+                button.innerHTML = originalText;
+            }
+        }
+    });
+}
+
+function showAlert(type, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'}"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    $('#alertContainer').append(alertHtml);
+    
+
+    setTimeout(() => {
+        $('#alertContainer .alert').last().fadeOut();
+    }, 5000);
+}
+
+function updateCartCount(count) {
+    console.log('Updating cart count:', count);
+
+    const cartCountElement = document.querySelector('.cart-count, #cart-count, [data-cart-count]');
+    if (cartCountElement) {
+        cartCountElement.textContent = count;
+    }
+
+    const cartBadge = document.querySelector('.cart-badge, [data-cart-badge]');
+    if (cartBadge) {
+        cartBadge.textContent = count;
+        cartBadge.style.display = count > 0 ? 'inline' : 'none';
+    }
+}
+</script>
+
+<style>
+
+.card-img-top {
+    transition: none !important;
+}
+
+
+.fa-spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+.card:hover {
+    transform: translateY(-2px);
+    transition: transform 0.2s ease-in-out;
+}
+
+.add-to-cart-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+#quantity {
+    max-width: 80px;
+}
+
+.list-unstyled li {
+    font-size: 0.95rem;
+}
+</style>

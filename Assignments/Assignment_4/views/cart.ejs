@@ -1,0 +1,372 @@
+
+<div class="container py-5">
+
+
+    <% if (typeof message !== 'undefined' && message) { %>
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> <%= message %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+    
+    <% if (typeof error !== 'undefined' && error) { %>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle"></i> <%= error %>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    <% } %>
+
+    <% if (cart && cart.items && cart.items.length > 0) { %>
+        <div class="row">
+
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Cart Items (<%= cart.itemCount %>)</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <% cart.items.forEach((item, index) => { %>
+                            <div class="cart-item border-bottom p-3 <% if (index === cart.items.length - 1) { %>border-bottom-0<% } %>" id="item-<%= item.product._id %>">
+                                <div class="row align-items-center">
+
+                                    <div class="col-md-2">
+                                        <img src="<%= item.product.image %>" alt="<%= item.product.name %>" 
+                                             class="img-fluid rounded" style="max-height: 80px;"
+                                             onerror="this.src='https://via.placeholder.com/80x80/6c757d/ffffff?text=Product'">
+                                    </div>
+
+                                    <div class="col-md-4">
+                                        <h6 class="mb-1">
+                                            <a href="/products/<%= item.product._id %>" class="text-decoration-none">
+                                                <%= item.product.name %>
+                                            </a>
+                                        </h6>
+                                        <small class="text-muted">
+                                            <%= item.product.description.length > 60 ? 
+                                                item.product.description.substring(0, 60) + '...' : 
+                                                item.product.description %>
+                                        </small>
+                                        <div class="mt-1">
+                                            <span class="badge bg-secondary"><%= item.product.category || 'General' %></span>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <strong>$<%= parseFloat(item.product.price).toFixed(2) %></strong>
+                                        <small class="text-muted d-block">per item</small>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="input-group" style="max-width: 120px;">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button" 
+                                                    onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity - 1 %>)"
+                                                    <% if (item.quantity <= 1) { %>disabled<% } %>>
+                                                <i class="fas fa-minus"></i>
+                                            </button>
+                                            <input type="number" class="form-control form-control-sm text-center" 
+                                                   value="<%= item.quantity %>" min="1" max="<%= item.product.quantity %>"
+                                                   onchange="updateQuantity('<%= item.product._id %>', this.value)"
+                                                   id="qty-<%= item.product._id %>">
+                                            <button class="btn btn-outline-secondary btn-sm" type="button"
+                                                    onclick="updateQuantity('<%= item.product._id %>', <%= item.quantity + 1 %>)"
+                                                    <% if (item.quantity >= parseInt(item.product.quantity)) { %>disabled<% } %>>
+                                                <i class="fas fa-plus"></i>
+                                            </button>
+                                        </div>
+                                        <small class="text-muted">Max: <%= item.product.quantity %></small>
+                                    </div>
+
+                                    <div class="col-md-2">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <strong class="text-primary">$<%= item.itemTotal %></strong>
+                                            <button class="btn btn-sm btn-outline-danger" 
+                                                    onclick="removeFromCart('<%= item.product._id %>')"
+                                                    title="Remove item">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <% }); %>
+                    </div>
+                </div>
+
+                <div class="mt-3">
+                    <button class="btn btn-outline-danger me-2" onclick="clearCart()">
+                        <i class="fas fa-trash"></i> Clear Cart
+                    </button>
+                    <a href="/products" class="btn btn-outline-primary me-2">
+                        <i class="fas fa-arrow-left"></i> Continue Shopping
+                    </a>
+                    <a href="/" class="btn btn-outline-secondary">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Order Summary</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Subtotal (<%= cart.itemCount %> items):</span>
+                            <strong>$<%= cart.total %></strong>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Shipping:</span>
+                            <span class="text-success">Free</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tax:</span>
+                            <span>$0.00</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3">
+                            <h5 class="mb-0">Total:</h5>
+                            <h5 class="mb-0 text-primary">$<%= cart.total %></h5>
+                        </div>
+
+                        <div class="d-grid">
+                            <button class="btn btn-success btn-lg mb-2" onclick="proceedToCheckout()">
+                                <i class="fas fa-credit-card"></i> Proceed to Checkout
+                            </button>
+                            <small class="text-muted text-center">
+                                <i class="fas fa-lock"></i> Secure checkout with SSL encryption
+                            </small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-header">
+                        <h6 class="mb-0">Promo Code</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Enter promo code" id="promoCode">
+                            <button class="btn btn-outline-primary" type="button" onclick="applyPromoCode()">
+                                Apply
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } else { %>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="text-center py-5">
+                    <i class="fas fa-shopping-cart fa-5x text-muted mb-4"></i>
+                    <h3>Your Cart is Empty</h3>
+                    <p class="text-muted mb-4">You haven't added any products to your cart yet.</p>
+                    <div class="d-flex justify-content-center gap-3">
+                        <a href="/products" class="btn btn-primary">
+                            <i class="fas fa-store"></i> Shop Now
+                        </a>
+                        <a href="/" class="btn btn-outline-secondary">
+                            <i class="fas fa-home"></i> Go to Home
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    <% } %>
+</div>
+
+<div id="alertContainer" class="position-fixed top-0 end-0 p-3" style="z-index: 1050;"></div>
+
+<script>
+function updateQuantity(productId, newQuantity) {
+    if (newQuantity < 1) {
+        removeFromCart(productId);
+        return;
+    }
+
+    const quantityInput = document.getElementById(`qty-${productId}`);
+    const originalValue = quantityInput.value;
+    quantityInput.disabled = true;
+    
+    $.ajax({
+        url: '/cart/update',
+        method: 'POST',
+        data: { 
+            productId: productId, 
+            quantity: newQuantity 
+        },
+        success: function(response) {
+            if (response.success) {
+
+                location.reload();
+            } else {
+                showAlert('danger', response.message || 'Error updating quantity');
+                quantityInput.value = originalValue;
+            }
+        },
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON ? 
+                xhr.responseJSON.message : 'Error updating cart';
+            showAlert('danger', errorMessage);
+            quantityInput.value = originalValue;
+        },
+        complete: function() {
+            quantityInput.disabled = false;
+        }
+    });
+}
+
+function removeFromCart(productId) {
+    if (!confirm('Are you sure you want to remove this item from your cart?')) {
+        return;
+    }
+
+    const itemElement = document.getElementById(`item-${productId}`);
+    itemElement.style.opacity = '0.5';
+    
+    $.ajax({
+        url: '/cart/remove',
+        method: 'POST',
+        data: { productId: productId },
+        success: function(response) {
+            if (response.success) {
+                showAlert('success', response.message || 'Item removed from cart');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showAlert('danger', response.message || 'Error removing item');
+                itemElement.style.opacity = '1';
+            }
+        },
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON ? 
+                xhr.responseJSON.message : 'Error removing item from cart';
+            showAlert('danger', errorMessage);
+            itemElement.style.opacity = '1';
+        }
+    });
+}
+
+function clearCart() {
+    if (!confirm('Are you sure you want to clear your entire cart? This action cannot be undone.')) {
+        return;
+    }
+    
+    $.ajax({
+        url: '/cart/clear',
+        method: 'POST',
+        success: function(response) {
+            if (response.success) {
+                showAlert('success', response.message || 'Cart cleared successfully');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showAlert('danger', response.message || 'Error clearing cart');
+            }
+        },
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON ? 
+                xhr.responseJSON.message : 'Error clearing cart';
+            showAlert('danger', errorMessage);
+        }
+    });
+}
+
+function proceedToCheckout() {
+
+    $.ajax({
+        url: '/checkout',
+        method: 'GET',
+        success: function() {
+            window.location.href = '/checkout';
+        },
+        error: function(xhr) {
+            if (xhr.status === 401) {
+                showAlert('warning', 'Please log in to proceed to checkout');
+                setTimeout(() => {
+                    window.location.href = '/login?redirect=/checkout';
+                }, 2000);
+            } else {
+                showAlert('danger', 'Error proceeding to checkout');
+            }
+        }
+    });
+}
+
+function applyPromoCode() {
+    const promoCode = document.getElementById('promoCode').value.trim();
+    
+    if (!promoCode) {
+        showAlert('warning', 'Please enter a promo code');
+        return;
+    }
+    
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.disabled = true;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+    
+    $.ajax({
+        url: '/cart/promo',
+        method: 'POST',
+        data: { promoCode: promoCode },
+        success: function(response) {
+            if (response.success) {
+                showAlert('success', response.message || 'Promo code applied successfully');
+
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showAlert('danger', response.message || 'Invalid promo code');
+            }
+        },
+        error: function(xhr) {
+            const errorMessage = xhr.responseJSON ? 
+                xhr.responseJSON.message : 'Error applying promo code';
+            showAlert('danger', errorMessage);
+        },
+        complete: function() {
+            button.disabled = false;
+            button.innerHTML = originalText;
+        }
+    });
+}
+
+function showAlert(type, message) {
+    const alertHtml = `
+        <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-triangle'}"></i>
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    `;
+    
+    $('#alertContainer').append(alertHtml);
+    
+
+    setTimeout(() => {
+        $('#alertContainer .alert').last().fadeOut();
+    }, 3000);
+}
+
+function updateCartCount(count) {
+
+    const cartCountElement = document.querySelector('.cart-count, #cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = count;
+    }
+
+    const cartBadge = document.querySelector('.cart-badge');
+    if (cartBadge) {
+        cartBadge.textContent = count;
+        cartBadge.style.display = count > 0 ? 'inline' : 'none';
+    }
+}
+</script>
