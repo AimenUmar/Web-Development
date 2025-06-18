@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout | Hobbs London</title>
+    <link rel="stylesheet" href="/css/checkout.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div>
+                <a href="/cart" class="back-link"> Continue shopping</a>
+            </div>
+            <div class="logo">
+                <h1>HOBBS</h1>
+                <span>LONDON</span>
+                <p><img src="/checkoutimages/checkout.png" alt="home"> Secure Checkout</p>
+            </div>
+            <div class="help-section">
+                <p>Need help?</p>
+                <p>Call us on: <span class="phone">0203 095 3939</span></p>
+            </div>
+        </header>
+        
+
+        <% if (typeof message !== 'undefined' && message) { %>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle"></i> <%= message %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle"></i> <%= error %>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        <% } %>
+        
+        <div class="checkout-steps">
+            <div class="step active">1
+                <span class="step-label">DELIVERY</span>
+            </div>
+            <div class="step">2
+                <span class="step-label">PAYMENT</span>
+            </div>
+            <div class="step">3
+                <span class="step-label">RECEIPT</span>
+            </div>
+        </div>
+        
+        <div class="checkout-content">
+            <div class="delivery-section">
+                <h2>DELIVERY</h2>
+                
+                <div class="delivery-options">
+                    <div class="delivery-option selected">
+                        <h3><img src="/checkoutimages/home.png" alt="home"> HOME / OFFICE DELIVERY</h3>
+                        <p>Choose your delivery method below</p>
+                        <div class="checkmark">✓</div>
+                    </div>
+                    <div class="delivery-option">
+                        <h3><img src="/checkoutimages/click.png" alt="click"> CLICK & COLLECT</h3>
+                        <p>Collect from one of 51 Hobbs stores</p>
+                    </div>
+                </div>
+                
+                <div class="success-message" id="successMessage" style="display: none;">
+                    Your order has been placed successfully! Thank you for your purchase.
+                </div>
+                
+                <div id="deliveryForm">
+                    <h2>DELIVERY ADDRESS</h2>
+                    
+                    <div class="address-finder">
+                        <h3>ADDRESS QUICK FINDER</h3>
+                        <div class="search-box">
+                            <div class="search-icon"><img src="/checkoutimages/searchicon.png" alt="Search icon"></div>
+                            <input type="text" placeholder="Type address or postcode">
+                        </div>
+                        <a class="manual-address">Enter address manually</a>
+                    </div>
+                    
+                    <form id="checkoutForm" action="/orders/place" method="POST">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="title">Title*</label>
+                                <select id="title" name="title" required>
+                                    <option value="">Please select</option>
+                                    <option value="mr" <%= formData && formData.title === 'mr' ? 'selected' : '' %>>Mr</option>
+                                    <option value="mrs" <%= formData && formData.title === 'mrs' ? 'selected' : '' %>>Mrs</option>
+                                    <option value="miss" <%= formData && formData.title === 'miss' ? 'selected' : '' %>>Miss</option>
+                                    <option value="ms" <%= formData && formData.title === 'ms' ? 'selected' : '' %>>Ms</option>
+                                    <option value="dr" <%= formData && formData.title === 'dr' ? 'selected' : '' %>>Dr</option>
+                                </select>
+                                <div class="error-message" id="titleError">Please select a title</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name*</label>
+                                <input type="text" id="firstName" name="firstName" value="<%= formData && formData.firstName ? formData.firstName : '' %>" required pattern="^[A-Za-z\s]+$">
+                                <div class="error-message" id="firstNameError">Please enter a valid first name (letters only)</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name*</label>
+                                <input type="text" id="lastName" name="lastName" value="<%= formData && formData.lastName ? formData.lastName : '' %>" required pattern="^[A-Za-z\s]+$">
+                                <div class="error-message" id="lastNameError">Please enter a valid last name (letters only)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="countryCode">Country Code</label>
+                                <select id="countryCode" name="countryCode">
+                                    <option value="+92" <%= formData && formData.countryCode === '+92' ? 'selected' : '' %>>🇵🇰 +92</option>
+                                    <option value="+44" <%= formData && formData.countryCode === '+44' ? 'selected' : '' %>>🇬🇧 +44</option>
+                                    <option value="+1" <%= formData && formData.countryCode === '+1' ? 'selected' : '' %>>🇺🇸 +1</option>
+                                    <option value="+33" <%= formData && formData.countryCode === '+33' ? 'selected' : '' %>>🇫🇷 +33</option>
+                                    <option value="+49" <%= formData && formData.countryCode === '+49' ? 'selected' : '' %>>🇩🇪 +49</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number*</label>
+                                <input type="tel" id="phone" name="phone" value="<%= formData && formData.phone ? formData.phone : '' %>" required pattern="[0-9]{10,15}" minlength="10" maxlength="15">
+                                <div class="error-message" id="phoneError">Please enter a valid phone number (10-15 digits)</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" value="<%= formData && formData.email ? formData.email : '' %>">
+                            <div class="error-message" id="emailError">Please enter a valid email address</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address">Address Line 1*</label>
+                            <input type="text" id="address" name="address" value="<%= formData && formData.address ? formData.address : '' %>" required>
+                            <div class="error-message" id="addressError">Please enter your address</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="address2">Address Line 2</label>
+                            <input type="text" id="address2" name="address2" value="<%= formData && formData.address2 ? formData.address2 : '' %>">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="city">City*</label>
+                                <input type="text" id="city" name="city" value="<%= formData && formData.city ? formData.city : '' %>" required>
+                                <div class="error-message" id="cityError">Please enter your city</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="postcode">Postcode*</label>
+                                <input type="text" id="postcode" name="postcode" value="<%= formData && formData.postcode ? formData.postcode : '' %>" required>
+                                <div class="error-message" id="postcodeError">Please enter your postcode</div>
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="country">Country*</label>
+                            <select id="country" name="country" required>
+                                <option value="Pakistan" <%= formData && formData.country === 'Pakistan' ? 'selected' : '' %>>Pakistan</option>
+                                <option value="United Kingdom" <%= formData && formData.country === 'United Kingdom' ? 'selected' : '' %>>United Kingdom</option>
+                                <option value="United States" <%= formData && formData.country === 'United States' ? 'selected' : '' %>>United States</option>
+                                <option value="France" <%= formData && formData.country === 'France' ? 'selected' : '' %>>France</option>
+                                <option value="Germany" <%= formData && formData.country === 'Germany' ? 'selected' : '' %>>Germany</option>
+                            </select>
+                            <div class="error-message" id="countryError">Please select a country</div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="notes">Additional Notes (Optional)</label>
+                            <textarea id="notes" name="notes" rows="3" placeholder="Any special delivery instructions..."><%= formData && formData.notes ? formData.notes : '' %></textarea>
+                        </div>
+                        
+                        <div class="payment-section">                            
+                            <button type="submit" class="continue-btn">PLACE ORDER (Pay Later)</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <% if (cart && cart.items && cart.items.length > 0) { %>
+                    <h2>Your Items (<%= cart.itemCount %>)</h2>
+                    
+                    <% cart.items.forEach(item => { %>
+                        <div class="product-item">
+                            <div class="product-image">
+                                <img src="<%= item.product.image %>" alt="<%= item.product.name %>" 
+                                     onerror="this.src='https://via.placeholder.com/80x80/6c757d/ffffff?text=Product'">
+                            </div>
+                            <div class="product-details">
+                                <h3><%= item.product.name.toUpperCase() %></h3>
+                                <p>Category: <%= item.product.category || 'General' %></p>
+                                <p>Quantity: <%= item.quantity %></p>
+                                <p class="price">$<%= parseFloat(item.itemTotal).toFixed(2) %></p>
+                            </div>
+                        </div>
+                    <% }); %>
+                    
+                    <div class="order-totals">
+                        <div class="total-row">
+                            <span>Bag total</span>
+                            <span>$<%= parseFloat(cart.total).toFixed(2) %></span>
+                        </div>
+                        <div class="total-row">
+                            <span>Delivery method</span>
+                            <span>Free</span>
+                        </div>
+                        <div class="total-row final-total">
+                            <span>TOTAL</span>
+                            <span>$<%= parseFloat(cart.total).toFixed(2) %></span>
+                        </div>
+                    </div>
+                <% } else { %>
+                    <div class="empty-cart">
+                        <h2>Your Cart is Empty</h2>
+                        <p>No items to checkout</p>
+                        <a href="/" class="continue-btn">Continue Shopping</a>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/checkout.js"></script>
+    <script>
+
+        document.getElementById('checkoutForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+
+            <% if (!cart || !cart.items || cart.items.length === 0) { %>
+                alert('Your cart is empty. Please add items before proceeding to checkout.');
+                window.location.href = '/products';
+                return;
+            <% } %>
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const fullName = firstName + ' ' + lastName;
+  
+            const nameInput = document.createElement('input');
+            nameInput.type = 'hidden';
+            nameInput.name = 'name';
+            nameInput.value = fullName;
+            this.appendChild(nameInput);
+
+            const address1 = document.getElementById('address').value.trim();
+            const address2 = document.getElementById('address2').value.trim();
+            const city = document.getElementById('city').value.trim();
+            const postcode = document.getElementById('postcode').value.trim();
+            const country = document.getElementById('country').value;
+            
+            const fullAddress = `${address1}${address2 ? ', ' + address2 : ''}, ${city}, ${postcode}, ${country}`;
+            
+
+            document.getElementById('address').name = 'address';
+            document.getElementById('address').value = fullAddress;
+            
+
+            this.submit();
+        });
+        console.log('Cart data:', <%= JSON.stringify(cart || null) %>);
+    </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card admin-card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    Complaints Management
+                </h5>
+                <div class="d-flex gap-2">
+                    <a href="/admin/complaints?status=all" class="btn btn-sm <%= currentStatus === 'all' ? 'btn-primary' : 'btn-outline-primary' %>">
+                        All (<%= statusStats.all %>)
+                    </a>
+                    <a href="/admin/complaints?status=pending" class="btn btn-sm <%= currentStatus === 'pending' ? 'btn-warning' : 'btn-outline-warning' %>">
+                        Pending (<%= statusStats.pending %>)
+                    </a>
+                    <a href="/admin/complaints?status=in-progress" class="btn btn-sm <%= currentStatus === 'in-progress' ? 'btn-info' : 'btn-outline-info' %>">
+                        In Progress (<%= statusStats['in-progress'] %>)
+                    </a>
+                    <a href="/admin/complaints?status=resolved" class="btn btn-sm <%= currentStatus === 'resolved' ? 'btn-success' : 'btn-outline-success' %>">
+                        Resolved (<%= statusStats.resolved %>)
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <% if (complaints && complaints.length > 0) { %>
+                    <div class="table-responsive">
+                        <table class="table table-admin">
+                            <thead>
+                                <tr>
+                                    <th>Complaint #</th>
+                                    <th>Customer</th>
+                                    <th>Order ID</th>
+                                    <th>Message</th>
+                                    <th>Status</th>
+                                    <th>Date</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% complaints.forEach(complaint => { %>
+                                    <tr>
+                                        <td>
+                                            <strong><%= complaint.complaintNumber %></strong>
+                                        </td>
+                                        <td>
+                                            <% if (complaint.userId) { %>
+                                                <div>
+                                                    <strong><%= complaint.userId.firstName %> <%= complaint.userId.lastName %></strong>
+                                                    <br>
+                                                    <small class="text-muted"><%= complaint.userId.email %></small>
+                                                </div>
+                                            <% } else { %>
+                                                <span class="text-muted">Unknown User</span>
+                                            <% } %>
+                                        </td>
+                                        <td>
+                                            <code><%= complaint.orderId %></code>
+                                        </td>
+                                        <td>
+                                            <div class="complaint-message">
+                                                <%= complaint.message.length > 50 ? complaint.message.substring(0, 50) + '...' : complaint.message %>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <span class="badge-status status-<%= complaint.status %>">
+                                                <%= complaint.status.charAt(0).toUpperCase() + complaint.status.slice(1) %>
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <small><%= complaint.formattedDate %></small>
+                                        </td>
+                                        <td>
+                                            <div class="btn-group" role="group">
+                                                <a href="/admin/complaints/<%= complaint._id %>" class="btn btn-sm btn-outline-primary" title="View Details">
+                                                    <i class="fas fa-eye"></i>
+                                                </a>
+                                                <div class="dropdown">
+                                                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                                        <i class="fas fa-cog"></i>
+                                                    </button>
+                                                    <ul class="dropdown-menu">
+                                                        <li>
+                                                            <form method="POST" action="/admin/complaints/<%= complaint._id %>/status" class="d-inline">
+                                                                <input type="hidden" name="status" value="pending">
+                                                                <button type="submit" class="dropdown-item <%= complaint.status === 'pending' ? 'disabled' : '' %>">
+                                                                    <i class="fas fa-clock text-warning me-2"></i>Mark as Pending
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form method="POST" action="/admin/complaints/<%= complaint._id %>/status" class="d-inline">
+                                                                <input type="hidden" name="status" value="in-progress">
+                                                                <button type="submit" class="dropdown-item <%= complaint.status === 'in-progress' ? 'disabled' : '' %>">
+                                                                    <i class="fas fa-spinner text-info me-2"></i>Mark as In Progress
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form method="POST" action="/admin/complaints/<%= complaint._id %>/status" class="d-inline">
+                                                                <input type="hidden" name="status" value="resolved">
+                                                                <button type="submit" class="dropdown-item <%= complaint.status === 'resolved' ? 'disabled' : '' %>">
+                                                                    <i class="fas fa-check text-success me-2"></i>Mark as Resolved
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                        <li>
+                                                            <form method="POST" action="/admin/complaints/<%= complaint._id %>/status" class="d-inline">
+                                                                <input type="hidden" name="status" value="closed">
+                                                                <button type="submit" class="dropdown-item <%= complaint.status === 'closed' ? 'disabled' : '' %>">
+                                                                    <i class="fas fa-times text-danger me-2"></i>Mark as Closed
+                                                                </button>
+                                                            </form>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <% }); %>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <% if (totalPages > 1) { %>
+                        <nav aria-label="Complaints pagination" class="mt-4">
+                            <ul class="pagination justify-content-center">
+                                <% if (hasPrevPage) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/admin/complaints?page=<%= currentPage - 1 %>&status=<%= currentStatus %>">
+                                            <i class="fas fa-chevron-left"></i> Previous
+                                        </a>
+                                    </li>
+                                <% } %>
+                                
+                                <% for (let i = 1; i <= totalPages; i++) { %>
+                                    <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                        <a class="page-link" href="/admin/complaints?page=<%= i %>&status=<%= currentStatus %>"><%= i %></a>
+                                    </li>
+                                <% } %>
+                                
+                                <% if (hasNextPage) { %>
+                                    <li class="page-item">
+                                        <a class="page-link" href="/admin/complaints?page=<%= currentPage + 1 %>&status=<%= currentStatus %>">
+                                            Next <i class="fas fa-chevron-right"></i>
+                                        </a>
+                                    </li>
+                                <% } %>
+                            </ul>
+                        </nav>
+                    <% } %>
+                <% } else { %>
+                    <div class="text-center py-5">
+                        <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No complaints found</h5>
+                        <p class="text-muted">
+                            <% if (currentStatus === 'all') { %>
+                                No complaints have been submitted yet.
+                            <% } else { %>
+                                No complaints with status "<%= currentStatus %>" found.
+                            <% } %>
+                        </p>
+                    </div>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.complaint-message {
+    max-width: 200px;
+    word-wrap: break-word;
+}
+
+.status-pending { 
+    background: #ffc107; 
+    color: #212529; 
+}
+
+.status-in-progress { 
+    background: #17a2b8; 
+    color: white; 
+}
+
+.status-resolved { 
+    background: #28a745; 
+    color: white; 
+}
+
+.status-closed { 
+    background: #6c757d; 
+    color: white; 
+}
+
+.btn-group .dropdown-menu {
+    min-width: 180px;
+}
+
+.dropdown-item.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+@media (max-width: 768px) {
+    .table-responsive {
+        font-size: 0.875rem;
+    }
+    
+    .complaint-message {
+        max-width: 150px;
+    }
+    
+    .btn-group {
+        flex-direction: column;
+        gap: 2px;
+    }
+}
+</style>

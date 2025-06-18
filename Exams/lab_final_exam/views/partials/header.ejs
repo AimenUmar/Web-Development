@@ -1,0 +1,58 @@
+<header>
+
+        <div class="container-fluid p-0">
+            <p class='mt-n2' id="first-text">Shop with confidence - local taxes & duties are calculated at checkout</p>
+        </div>
+        
+        <div class="container-fluid p-0">
+            <section class="slideshow">
+                <div class="slides">
+                <div class="slide">FREE STANDARD DELIVERY OVER £150</div>
+                <div class="slide">FREE RETURNS</div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="search-bar">
+            <input type="text" placeholder="SEARCH FOR PRODUCTS">
+            <button type="submit">
+                <img src="/images/search.svg" alt="Search">
+            </button>
+        </div>
+
+        <div class="logo">
+            <img src="/images/logo.svg" alt="Hobbs Home">
+        </div>
+
+        <div class="header-icons">
+                <a href="/auth/login">
+                    <img src="/images/account.svg" alt="Login">
+                </a>
+
+            <form id="logout-form" action="/auth/logout" method="POST" style="display: inline;">
+                <button type="submit" style="border: none; background: none; padding: 0;" onclick="return confirm('Are you sure you want to logout?')">
+                    <img src="/images/logout.png" alt="Logout" style="cursor: pointer;">
+                </button>
+            </form>
+
+            <a href="/orders/my-orders">
+                <img src="/images/wishlist.svg" alt="My Orders">
+            </a>
+            <a href="/cart">
+                    <img src="/images/minicart.svg" alt="Cart">
+            </a>
+
+            <a href="/admin">
+                <img src="/images/admin.png" alt="Admin">
+            </a>
+
+            <a href="/contact">
+                <img src="/images/contactus.png" alt="Contact Us">
+            </a>
+        </div>
+        
+    </header>
+
+    <%- include('navigation') %>
+
+   
